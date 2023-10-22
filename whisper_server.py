@@ -4,6 +4,15 @@ from flask import Flask, request, redirect, jsonify
 import whisper
 import threading
 import requests
+from translate import Translator
+from dotenv import load_dotenv
+import openai
+
+# .envファイルの内容を読み込見込む
+load_dotenv()
+
+# 自分のBotのアクセストークンに置き換えてください
+TOKEN = os.environ['OPENAI_ACCESS_TOKEN']
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'m4a', 'mp3', 'wav'}
@@ -62,9 +71,21 @@ def respond_text():
     if request_data is None:
         return jsonify({'error': 'No JSON data received'}), 400
     print(request_data)
-     # レスポンスデータを作成
-    response_data = {'text': 'This is a response text.'}
-    
+    #日本語→英語の翻訳
+    translator = Translator(from_lang = "ja", to_lang = "en")
+    result = translator.translate(request_data['text'])
+    print('en'+result)
+
+
+
+    #英語→日本語の翻訳
+    translator = Translator(from_lang = "en", to_lang = "ja")
+    respond_data_text = translator.translate(result)
+    print('ja'+respond_data_text)
+
+    # レスポンスデータを作成
+    response_data = {'text': respond_data_text}
+
     # レスポンスデータをJSON形式で返す
     return jsonify(response_data), 200
 

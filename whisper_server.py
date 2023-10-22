@@ -13,7 +13,7 @@ load_dotenv()
 
 # 自分のBotのアクセストークンに置き換えてください
 TOKEN = os.environ['OPENAI_ACCESS_TOKEN']
-
+openai.api_key = TOKEN
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'m4a', 'mp3', 'wav'}
 WHISPER_MODEL_NAME = 'small'  # tiny, base, small, medium
@@ -75,12 +75,25 @@ def respond_text():
     translator = Translator(from_lang = "ja", to_lang = "en")
     result = translator.translate(request_data['text'])
     print('en'+result)
-
-
+    #chatGPTを呼ぶ
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "英語で返答してください。"
+            },
+            {
+                "role": "user",
+                "content":result
+            },
+        ],
+    )
+    print(res["choices"][0]["message"]["content"])
 
     #英語→日本語の翻訳
     translator = Translator(from_lang = "en", to_lang = "ja")
-    respond_data_text = translator.translate(result)
+    respond_data_text = translator.translate(res["choices"][0]["message"]["content"])
     print('ja'+respond_data_text)
 
     # レスポンスデータを作成

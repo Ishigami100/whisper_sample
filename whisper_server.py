@@ -3,6 +3,7 @@ import time
 from flask import Flask, request, redirect, jsonify
 import whisper
 import threading
+import requests
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'m4a', 'mp3', 'wav'}
@@ -42,6 +43,7 @@ def transcribe():
             elapsed_time = time.perf_counter() - time_sta  # タイポ修正
             print('time=' + str(elapsed_time))
             print(result)
+            os.remove(saved_filename)
             return jsonify(result), 200
         except Exception as e:
             print('Error:', str(e))
@@ -51,6 +53,20 @@ def transcribe():
     else:
         print('Invalid file format')
         return jsonify({'error': 'Invalid file format'}), 400
+
+@app.route('/api/respond_text', methods=['POST'])
+def respond_text():
+    print('start respond_text')
+    # POSTリクエストからJSONデータを取得
+    request_data = request.get_json()
+    if request_data is None:
+        return jsonify({'error': 'No JSON data received'}), 400
+    print(request_data)
+     # レスポンスデータを作成
+    response_data = {'text': 'This is a response text.'}
+    
+    # レスポンスデータをJSON形式で返す
+    return jsonify(response_data), 200
 
 if __name__ == '__main__':
     app.run(host='localhost', port=9000)

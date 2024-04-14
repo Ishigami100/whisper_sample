@@ -15,8 +15,9 @@ RUN  pip3 install python-dotenv
 RUN apt-get install -y vim
 WORKDIR /src
 
-# Discordボットのコードをコンテナにコピー
-COPY ./src /src
+
+COPY ./ /src
 
 # 必要なPythonライブラリをインストール
 RUN pip3 install -r /src/requirements.txt
+EXPOSE 3031

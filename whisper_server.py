@@ -3,8 +3,6 @@ import time
 from flask import Flask, request, redirect, jsonify
 import whisper
 import threading
-import requests
-from translate import Translator
 from dotenv import load_dotenv
 import openai
 
@@ -102,5 +100,12 @@ def respond_text():
     # レスポンスデータをJSON形式で返す
     return jsonify(response_data), 200
 
+# Flaskのみで動作するビルトインサーバーを起動する※ローカルで動かす時用
 if __name__ == '__main__':
-    app.run(host='localhost', port=9000)
+    PORT = 5000
+    app.run(
+        threaded=True,
+        debug=True,
+        port=PORT,
+        host='0.0.0.0',
+    )

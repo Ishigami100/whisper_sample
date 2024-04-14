@@ -37,3 +37,13 @@ $ sudo apt install ffmpeg
 $ ffmpeg -version
 ```
 
+
+
+## Dockerの立ち上げ方
+
+```
+docker image build -t whisper .
+
+docker container run -d -p 3031:3031 whisper
+```
+
